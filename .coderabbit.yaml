@@ -43,7 +43,14 @@ reviews:
       mode: "off"
       threshold: 80
 
-  path_instructions: []
+  path_instructions:
+    - path: '**/*'
+      instructions: >
+        - Flag any unintentional behavior changes in this codebase or any linked repositories
+        - When a change affects a linked repository, name the repository and the file and line that would break
+        - Review correctness, security, reliability, performance regressions, and functionality-breaking defects
+        - Avoid posting any refactoring suggestions and keep comments brief, actionable, and limited to blocking or high-confidence issues
+        - Avoid style, formatting, naming, documentation, and subjective refactoring unless they directly cause a bug or materially increase risk and when uncertain, prefer no comment over speculative feedback
 
   # Custom Workflows
   post_merge_actions: []
