@@ -22,7 +22,7 @@ data class FeedItem(
 
 data class Author(
     @SerializedName("id") val id: String,
-    @SerializedName("handle") val handle: String,
+    @SerializedName("username") val username: String,
     @SerializedName("avatar_url") val avatarUrl: String?,
 )
 

@@ -12,7 +12,7 @@ Update it in the same PR as any change to the response.
   "items": [
     {
       "post_id": "p_1001",
-      "author": { "id": "u_501", "handle": "priya_sings", "avatar_url": "https://..." },
+      "author": { "id": "u_501", "username": "priya_sings", "avatar_url": "https://..." },
       "media": { "type": "video", "url": "https://...", "duration_ms": 31000 },
       "caption": "Navratri garba 💃",
       "language": "hi",
