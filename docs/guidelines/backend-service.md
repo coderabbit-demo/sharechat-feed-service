@@ -1,7 +1,6 @@
 # feed-service engineering guidelines
 
 `/v1/feed` is the most-called endpoint in the app. These rules keep it fast and safe.
-For API response changes, also follow the `mobile-api-compatibility` skill in `sharechat-ai-context`.
 
 ## Request path
 - Keep the request thread for building the response. Work the response doesn't need (analytics,

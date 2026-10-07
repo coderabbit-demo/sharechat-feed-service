@@ -22,15 +22,6 @@ knowledge_base:
         - Flag code in this app that would crash, fail to parse, or show wrong values after the change,
           and point to the file and line
 
-  code_guidelines:
-    filePatterns:
-      # This repo's engineering guidelines
-      - files: docs/guidelines/**/*.md
-        applyTo: "src/**"
-      # Shared skill from the org's skills repo
-      - files: "sharechat-ai-context:plugins/api-compatibility/skills/**/*.md"
-        applyTo: "src/**,api/**"
-
 reviews:
   enable_prompt_for_ai_agents: true # Agents can read & address the issues CodeRabbit flags
   slop_detection:

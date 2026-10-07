@@ -24,16 +24,6 @@ Update it in the same PR as any change to the response.
 }
 ```
 
-## Consumers
-
-| Repo | Reads |
-|---|---|
-| `sharechat-android` | `FeedItem.kt` (Gson, snake_case keys) |
-| `sharechat-ios` | `FeedItem.swift` (Codable, snake_case keys, ISO-8601 dates) |
-
-Changes must stay backward-compatible with installed app versions. Follow the
-`mobile-api-compatibility` skill from `sharechat-ai-context`.
-
 ## Run
 
 ```
