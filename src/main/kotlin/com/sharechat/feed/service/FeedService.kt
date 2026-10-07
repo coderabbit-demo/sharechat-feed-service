@@ -1,14 +1,18 @@
 package com.sharechat.feed.service
 
+import com.sharechat.feed.client.ProfileClient
 import com.sharechat.feed.model.Author
 import com.sharechat.feed.model.FeedItem
 import com.sharechat.feed.model.FeedResponse
 import com.sharechat.feed.model.Media
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 
 @Service
-class FeedService {
+class FeedService(private val profileClient: ProfileClient) {
+
+    private val log = LoggerFactory.getLogger(FeedService::class.java)
 
     // Stand-in for the ranked candidates normally returned by the ranking service.
     private val posts = listOf(
@@ -44,7 +48,11 @@ class FeedService {
     fun getFeed(userId: String, lang: String?, cursor: String?, limit: Int): FeedResponse {
         val candidates = if (lang == null) posts else posts.filter { it.language == lang }
         val start = cursor?.toIntOrNull() ?: 0
-        val page = candidates.drop(start).take(limit)
+        val page = candidates.drop(start).take(limit).map { item ->
+            val profile = profileClient.getProfile(item.author.id)
+            log.info("post {} author {} followers={} verified={}", item.postId, item.author.id, profile.followerCount, profile.isVerified)
+            item.copy(author = item.author.copy(followerCount = profile.followerCount, isVerified = profile.isVerified))
+        }
         val next = (start + page.size).takeIf { it < candidates.size }?.toString()
         return FeedResponse(items = page, nextCursor = next)
     }

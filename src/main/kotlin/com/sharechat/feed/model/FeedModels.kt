@@ -24,6 +24,8 @@ data class Author(
     @SerializedName("id") val id: String,
     @SerializedName("handle") val handle: String,
     @SerializedName("avatar_url") val avatarUrl: String?,
+    @SerializedName("follower_count") val followerCount: Long? = null,
+    @SerializedName("is_verified") val isVerified: Boolean = false,
 )
 
 data class Media(
