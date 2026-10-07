@@ -36,7 +36,27 @@ reviews:
   # Enterprise Quality Gates
   pre_merge_checks:
     override_requested_reviewers_only: false
-    custom_checks: []
+    custom_checks:
+      - mode: error
+        name: DPDP Compliance
+        instructions: >
+          Review against India's Digital Personal Data Protection Act, 2023 (DPDP Act) and its rules.
+          ShareChat processes personal data of Indian users, including minors.
+
+          - Flag collection or processing of personal data without a stated lawful purpose or consent,
+            or use of personal data beyond the purpose it was collected for
+          - Flag collection, storage, or sharing of more personal data than the feature needs
+            (data minimization), for example precise location where city-level would do
+          - Flag personal data (names, phone numbers, emails, device IDs, IP addresses, precise location,
+            contacts, government IDs) written to logs, analytics, error reports, AI prompts, or third parties
+          - Flag processing of children's data (under 18) without verifiable parental consent, and any
+            tracking, behavioural monitoring, or targeted advertising directed at children
+          - Flag transfers of personal data outside India to destinations or vendors not already approved
+          - Flag changes that weaken a user's ability to access, correct, or erase their data, or that keep
+            personal data after its purpose is served
+
+          When failing, name the data element, where it flows, the DPDP obligation at risk, and a fix.
+          Pass if the change does not introduce or alter processing of personal data.
 
     # Standard Pre-merge Checks
     title:
