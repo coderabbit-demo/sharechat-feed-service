@@ -1,0 +1,119 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+# CodeRabbit YAML Configuration Documentation: https://docs.coderabbit.ai/reference/configuration
+
+knowledge_base:
+  automatic_linking_mode: enabled # Automatically detect related repositories to flag breaking changes & downstream impact
+
+  # Apps that consume this service's API
+  linked_repositories:
+    - repository: coderabbit-demo/sharechat-android
+      instructions: >
+        Android app that consumes this service's API.
+        - Flag changes that alter what this app receives: field names, key casing, types, nullability,
+          date/time or number formats, enum values, pagination, or error shapes
+        - Flag code in this app that would crash, fail to parse, or show wrong values after the change,
+          and point to the file and line
+    - repository: coderabbit-demo/sharechat-ios
+      instructions: >
+        iOS app that consumes this service's API.
+        - Flag changes that alter what this app receives: field names, key casing, types, nullability,
+          date/time or number formats, enum values, pagination, or error shapes
+        - Flag code in this app that would crash, fail to parse, or show wrong values after the change,
+          and point to the file and line
+
+  code_guidelines:
+    filePatterns:
+      # This repo's engineering guidelines
+      - files: docs/guidelines/**/*.md
+        applyTo: "src/**"
+      # Shared skill from the org's skills repo
+      - files: "sharechat-ai-context:plugins/api-compatibility/skills/**/*.md"
+        applyTo: "src/**,api/**"
+
+reviews:
+  enable_prompt_for_ai_agents: true # Agents can read & address the issues CodeRabbit flags
+  slop_detection:
+    enabled: true
+
+  # Enterprise Quality Gates
+  pre_merge_checks:
+    override_requested_reviewers_only: false
+    custom_checks: []
+
+    # Standard Pre-merge Checks
+    title:
+      mode: "off"
+    description:
+      mode: "off"
+    issue_assessment:
+      mode: "off"
+    docstrings:
+      mode: "off"
+      threshold: 80
+
+  path_instructions: []
+
+  # Custom Workflows
+  post_merge_actions: []
+  finishing_touches:
+    custom: []
+
+  # Reviewer Auto-assignment
+  suggested_reviewers: true
+  auto_assign_reviewers: false
+  suggested_reviewers_instructions: []
+
+  # Labels Automatically Applied
+  suggested_labels: true
+  auto_apply_labels: false
+  labeling_instructions: []
+  mutually_exclusive_groups: {}
+
+  # Issue Tracking
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+
+  # PR Summary
+  high_level_summary: true
+
+  # Review all branches, all draft PRs, & all stacked PRs
+  auto_review:
+    enabled: true
+    drafts: true
+    base_branches: [".*"]
+
+  # UX Settings
+  profile: chill
+  sequence_diagrams: true
+  changed_files_summary: true
+  collapse_walkthrough: true
+  estimate_code_review_effort: false
+  auto_title_placeholder: "[cr]"
+  auto_title_instructions: "Follow: https://www.conventionalcommits.org/en/v1.0.0/"
+  high_level_summary_in_walkthrough: true
+  in_progress_fortune: false
+  review_details: false
+  poem: false
+
+  # CI/CD UX Settings
+  commit_status: false
+  fail_commit_status: false
+  review_progress: false
+  review_status: false
+
+  # Read before enabling; `request_changes_workflow: true` will:
+  #  - Block PRs from merging if CodeRabbit flags issues
+  #  - Approve PRs when the review is has no flagged issues
+  #  - On GitHub/Bitbucket, it will Request Changes and block when issues are flagged
+  #  - Workflows that auto-merge after only one approver are impacted by this
+  #  - Must be set to true if CodeRabbit is a required reviewer per branch protection
+  request_changes_workflow: false
+
+inheritance: true
+
+chat:
+  art: false
+  # CodeRabbit will automatically respond to humans in PR discussions
+  auto_reply: true

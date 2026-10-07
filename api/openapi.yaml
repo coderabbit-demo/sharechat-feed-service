@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: ShareChat Feed API
+  version: 1.0.0
+  description: Served by sharechat-feed-service. Consumed by sharechat-android and sharechat-ios.
+paths:
+  /v1/feed:
+    get:
+      summary: Get a personalized feed page
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: lang
+          in: query
+          required: false
+          description: Content language code (e.g. hi, ta, te, bn). Defaults to the user's profile language.
+          schema: { type: string }
+        - name: cursor
+          in: query
+          required: false
+          description: Opaque cursor from a previous response's next_cursor.
+          schema: { type: string }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, default: 20, minimum: 1, maximum: 50 }
+      responses:
+        "200":
+          description: A page of feed items
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FeedResponse" }
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+components:
+  schemas:
+    FeedResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/FeedItem" }
+        next_cursor:
+          type: string
+          nullable: true
+          description: Null when there are no more pages.
+    FeedItem:
+      type: object
+      required: [post_id, author, media, language, created_at]
+      properties:
+        post_id: { type: string }
+        author: { $ref: "#/components/schemas/Author" }
+        media: { $ref: "#/components/schemas/Media" }
+        caption: { type: string }
+        language: { type: string }
+        like_count: { type: integer, default: 0 }
+        created_at: { type: string, format: date-time }
+    Author:
+      type: object
+      required: [id, handle]
+      properties:
+        id: { type: string }
+        handle: { type: string }
+        avatar_url: { type: string }
+    Media:
+      type: object
+      required: [type, url]
+      properties:
+        type:
+          type: string
+          enum: [image, video, text]
+          description: Clients must treat unknown values as "unknown" and skip rendering.
+        url: { type: string }
+        duration_ms: { type: integer, description: Only for video }
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string }
