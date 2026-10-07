@@ -68,6 +68,8 @@ components:
         id: { type: string }
         handle: { type: string }
         avatar_url: { type: string }
+        follower_count: { type: integer, nullable: true }
+        is_verified: { type: boolean, default: false }
     Media:
       type: object
       required: [type, url]
