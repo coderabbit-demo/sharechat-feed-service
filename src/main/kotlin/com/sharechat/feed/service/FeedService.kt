@@ -1,5 +1,6 @@
 package com.sharechat.feed.service
 
+import com.sharechat.feed.comments.service.CommentService
 import com.sharechat.feed.model.Author
 import com.sharechat.feed.model.FeedItem
 import com.sharechat.feed.model.FeedResponse
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 @Service
-class FeedService {
+class FeedService(private val comments: CommentService) {
 
     // Stand-in for the ranked candidates normally returned by the ranking service.
     private val posts = listOf(
@@ -44,8 +45,10 @@ class FeedService {
     fun getFeed(userId: String, lang: String?, cursor: String?, limit: Int): FeedResponse {
         val candidates = if (lang == null) posts else posts.filter { it.language == lang }
         val start = cursor?.toIntOrNull() ?: 0
-        val page = candidates.drop(start).take(limit)
-        val next = (start + page.size).takeIf { it < candidates.size }?.toString()
+        val slice = candidates.drop(start).take(limit)
+        val counts = comments.countsFor(slice.map { it.postId })
+        val page = slice.map { it.copy(commentCount = counts[it.postId] ?: 0) }
+        val next = (start + slice.size).takeIf { it < candidates.size }?.toString()
         return FeedResponse(items = page, nextCursor = next)
     }
 }

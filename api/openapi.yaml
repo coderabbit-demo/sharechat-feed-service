@@ -37,6 +37,96 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+  /v1/posts/{postId}/comments:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      summary: List comments on a post (pinned first, then oldest first)
+      parameters:
+        - name: cursor
+          in: query
+          required: false
+          schema: { type: string }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, default: 20, minimum: 1, maximum: 50 }
+      responses:
+        "200":
+          description: A page of comments
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CommentPage" }
+    post:
+      summary: Add a comment to a post
+      description: The author is the calling user (X-User-Id header set by the API gateway).
+      parameters:
+        - name: lang
+          in: query
+          required: false
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateCommentRequest" }
+      responses:
+        "201":
+          description: Comment created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Comment" }
+  /v1/comments/{commentId}:
+    parameters:
+      - name: commentId
+        in: path
+        required: true
+        schema: { type: string }
+    patch:
+      summary: Edit a comment's text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateCommentRequest" }
+      responses:
+        "200":
+          description: Updated comment
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Comment" }
+    delete:
+      summary: Delete your own comment
+      responses:
+        "204": { description: Deleted }
+        "403": { description: Not the author }
+  /v1/moderation/comments/{commentId}/hide:
+    parameters:
+      - name: commentId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      summary: Hide a published comment (moderators only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string }
+      responses:
+        "200":
+          description: Hidden comment
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Comment" }
+        "403": { description: Not a moderator }
 components:
   schemas:
     FeedResponse:
@@ -60,6 +150,7 @@ components:
         caption: { type: string }
         language: { type: string }
         like_count: { type: integer, default: 0 }
+        comment_count: { type: integer, nullable: true }
         created_at: { type: string, format: date-time }
     Author:
       type: object
@@ -84,3 +175,38 @@ components:
       properties:
         code: { type: string }
         message: { type: string }
+    Comment:
+      type: object
+      required: [id, post_id, author_id, text, status, pinned, created_at]
+      properties:
+        id: { type: string }
+        post_id: { type: string }
+        author_id: { type: string }
+        text: { type: string, maxLength: 2000 }
+        status: { type: string, enum: [PENDING, APPROVED, REJECTED, HIDDEN] }
+        pinned: { type: boolean }
+        created_at: { type: string, format: date-time }
+        edited_at: { type: string, format: date-time, nullable: true }
+    CommentPage:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Comment" }
+        next_cursor: { type: string, nullable: true }
+    CreateCommentRequest:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, maxLength: 2000 }
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED, HIDDEN]
+          description: Optional; used by the comment migration job to keep the original state.
+        pinned: { type: boolean }
+    UpdateCommentRequest:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, maxLength: 2000 }

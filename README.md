@@ -24,6 +24,18 @@ Update it in the same PR as any change to the response.
 }
 ```
 
+## Comments
+
+| Method | Path | Who |
+|---|---|---|
+| `GET` | `/v1/posts/{postId}/comments` | Anyone |
+| `POST` | `/v1/posts/{postId}/comments` | Signed-in users |
+| `PATCH` / `DELETE` | `/v1/comments/{commentId}` | The comment's author |
+| `POST` | `/v1/moderation/comments/{commentId}/hide` | Trust & safety moderators |
+
+New comments are checked by the moderation service before they're published. The API gateway forwards
+the caller's identity in `X-User-Id` and their role in `X-User-Role`. Feed items include `comment_count`.
+
 ## Run
 
 ```

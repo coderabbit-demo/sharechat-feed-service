@@ -17,6 +17,7 @@ data class FeedItem(
     @SerializedName("caption") val caption: String?,
     @SerializedName("language") val language: String,
     @SerializedName("like_count") val likeCount: Long,
+    @SerializedName("comment_count") val commentCount: Int? = null,
     @SerializedName("created_at") val createdAt: Instant,
 )
 
