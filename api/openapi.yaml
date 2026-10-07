@@ -63,10 +63,10 @@ components:
         created_at: { type: string, format: date-time }
     Author:
       type: object
-      required: [id, handle]
+      required: [id, username]
       properties:
         id: { type: string }
-        handle: { type: string }
+        username: { type: string }
         avatar_url: { type: string }
     Media:
       type: object
